@@ -97,7 +97,7 @@ DigiLife es un simulador avanzado de vida artificial donde criaturas digitales e
 
 ### 1. Clonar Repositorio
 ```bash
-git clone https://github.com/tu-usuario/DigiLife.git
+git clone https://github.com/Wamphyre/DigiLife.git
 cd DigiLife
 ```
 
