@@ -91,6 +91,12 @@ class Creature:
         # Sistema vocal
         self.vocal_system = VocalSystem(self)
         
+        # Sistema de inteligencia (solo para criaturas muy avanzadas)
+        self.intelligence = None
+        if self.complexity >= 1500:
+            from .knowledge_system import CreatureIntelligence
+            self.intelligence = CreatureIntelligence(self, self.world.knowledge_base)
+        
         # Memoria
         self.memory = []
         self.memory_size = 20
@@ -127,9 +133,19 @@ class Creature:
             if self.can_reproduce():
                 self.reproduce()
         
-        # Vocalizar si es apropiado - Aumentada frecuencia para más variedad
-        if self.can_vocalize() and random.random() < 0.02:  # 2% por frame (aumentado de 0.5%)
+        # Vocalizar si es apropiado - OPTIMIZADO: Reducida frecuencia para mejor rendimiento
+        if self.can_vocalize() and random.random() < 0.01:  # 1% por frame (reducido de 2% para rendimiento)
             self.vocal_system.vocalize()
+        
+        # Sistema de inteligencia avanzada (solo criaturas muy inteligentes)
+        if self.intelligence:
+            self.intelligence.analyze_environment(dt)
+        elif self.complexity >= 1500 and not self.intelligence:
+            # Criatura alcanzó inteligencia suficiente, activar sistema
+            from .knowledge_system import CreatureIntelligence
+            self.intelligence = CreatureIntelligence(self, self.world.knowledge_base)
+            if config.DEBUG.get('LOG_INTELLIGENCE', False):
+                print(f"🧠 Criatura {self.id} alcanzó inteligencia avanzada (comp: {self.complexity:.0f})")
         
         # Actualizar apariencia - Solo cada 5 frames
         if self.age % 5 < dt:
@@ -679,6 +695,11 @@ class Creature:
             if creature != self and creature.complexity >= config.COMMUNICATION_COMPLEXITY_THRESHOLD:
                 creature.complexity += complexity_share * 0.5
                 creature.fitness += 1
+                
+                # Compartir conocimiento si ambas son inteligentes
+                if self.intelligence and hasattr(creature, 'intelligence') and creature.intelligence:
+                    if random.random() < 0.2:  # 20% de compartir conocimiento
+                        self.intelligence.share_knowledge(creature)
         
         self.fitness += 2
         
@@ -793,8 +814,8 @@ class Creature:
             if self.can_reproduce():
                 self.reproduce()
         
-        # Vocalización (aumentada frecuencia)
-        if self.can_vocalize() and random.random() < 0.02:  # 2% por frame
+        # Vocalización (OPTIMIZADO: frecuencia reducida)
+        if self.can_vocalize() and random.random() < 0.01:  # 1% por frame (optimizado)
             self.vocal_system.vocalize()
         
         # Apariencia (cada 5 frames)

@@ -576,6 +576,47 @@ class StatsPanel:
                 surface.blit(word_text, (10, y_offset))
                 y_offset += 18
         
+        # Inteligencia avanzada si tiene
+        if hasattr(creature, 'intelligence') and creature.intelligence:
+            y_offset += 15
+            pygame.draw.line(surface, (100, 200, 255),
+                            (0, y_offset), (self.width - 20, y_offset), 2)
+            y_offset += 15
+            
+            intel_title = self.font_small.render("INTELIGENCIA AVANZADA", True, (100, 200, 255))
+            surface.blit(intel_title, (0, y_offset))
+            y_offset += 25
+            
+            knowledge_summary = creature.intelligence.get_knowledge_summary()
+            
+            # Sabiduría
+            wisdom_text = self.font_small.render(
+                f"Sabiduría: {knowledge_summary['wisdom']}", 
+                True, (200, 200, 255)
+            )
+            surface.blit(wisdom_text, (5, y_offset))
+            y_offset += 22
+            
+            # Conocimientos aprendidos
+            knowledge_text = self.font_tiny.render(
+                f"Conocimientos: {knowledge_summary['knowledge_count']}", 
+                True, (180, 180, 200)
+            )
+            surface.blit(knowledge_text, (5, y_offset))
+            y_offset += 20
+            
+            # Insights descubiertos
+            if knowledge_summary['recent_insights']:
+                y_offset += 5
+                insights_title = self.font_tiny.render("Descubrimientos recientes:", True, (150, 200, 255))
+                surface.blit(insights_title, (5, y_offset))
+                y_offset += 18
+                
+                for insight in knowledge_summary['recent_insights']:
+                    insight_text = self.font_tiny.render(f"  • {insight}", True, (180, 180, 180))
+                    surface.blit(insight_text, (10, y_offset))
+                    y_offset += 16
+        
         return y_offset
     
     def calculate_ecosystem_stats(self):

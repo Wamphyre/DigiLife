@@ -1,8 +1,8 @@
 # 🧬 DigiLife - Simulador de Vida Artificial
 
-**Versión 2.9.2** | Simulación evolutiva con IA, depredación, colaboración y enfermedades
+**Versión 2.9.3** | Simulación evolutiva con IA, depredación, colaboración, enfermedades e inteligencia avanzada
 
-DigiLife es un simulador avanzado de vida artificial donde criaturas digitales evolucionan, aprenden, colaboran, compiten y desarrollan comportamientos emergentes complejos. Utiliza redes neuronales profundas, algoritmos genéticos y procesamiento GPU para crear un ecosistema dinámico y realista.
+DigiLife es un simulador avanzado de vida artificial donde criaturas digitales evolucionan, aprenden, colaboran, compiten y desarrollan comportamientos emergentes complejos. Las criaturas más inteligentes pueden analizar el entorno, descubrir patrones y compartir conocimiento. Utiliza redes neuronales profundas, algoritmos genéticos y procesamiento GPU para crear un ecosistema dinámico y realista.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
@@ -54,12 +54,22 @@ DigiLife es un simulador avanzado de vida artificial donde criaturas digitales e
 - **Enfermedades:** Epidemias aleatorias con síntomas y contagio
 - **Recursos Limitados:** Competencia por alimento
 
-### 🗣️ Vocalización
+### 🗣️ Vocalización y Comunicación
 - **Desarrollo Vocal:** Criaturas complejas (500+) pueden vocalizar
 - **Beeps Únicos:** Cada criatura tiene su propia "voz" (frecuencia única)
-- **Vocabulario Emergente:** Palabras asociadas a contextos
-- **Patrones de Sonido:** Diferentes secuencias de beeps por palabra
+- **Vocabulario Básico (500+):** hambre, datos, ayuda, hola, peligro, bien, malo
+- **Vocabulario Avanzado (1500+):** cohesión, reproducir, defender, peligro_aqui, seguir, explorar, descansar, atacar, huir, compartir
+- **Efectos Reales:** TODAS las palabras tienen efectos en el comportamiento del grupo
+- **Comunicación Funcional:** Compartir comida, pedir ayuda, coordinar ataques, formar grupos
 - **Aprendizaje Social:** Transmisión de conocimiento
+
+### 🧠 Inteligencia Avanzada (NUEVO v2.9.3)
+- **Análisis del Entorno:** Criaturas 1500+ descubren patrones
+- **Aprendizaje Observacional:** Aprenden de criaturas exitosas
+- **Compartir Conocimiento:** Transmisión cultural entre inteligentes
+- **Sabiduría Acumulada:** Experiencia que aumenta con descubrimientos
+- **Insights Personalizados:** Cada criatura desarrolla su propia comprensión
+- **Evolución Cultural:** Conocimiento se transmite sin genes
 
 ### 📊 Observación y Análisis
 - **Panel de Estadísticas:** Métricas en tiempo real

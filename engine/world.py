@@ -10,6 +10,7 @@ import config
 from .creature import Creature
 from .disease import DiseaseSystem
 from .neural_batch import get_batch_processor
+from .knowledge_system import KnowledgeBase
 from utils.data_generator import DataGenerator
 
 
@@ -43,6 +44,9 @@ class World:
         # Sistema de enfermedades
         self.disease_system = DiseaseSystem(self)
         
+        # Sistema de conocimiento e inteligencia
+        self.knowledge_base = KnowledgeBase()
+        
         # Procesador por lotes para GPU
         self.batch_processor = get_batch_processor()
         self.batch_size = 32  # Procesar 32 criaturas a la vez
@@ -71,6 +75,9 @@ class World:
         # Actualizar sistema de enfermedades
         if config.DISEASES_ENABLED:
             self.disease_system.update(dt)
+        
+        # Actualizar sistema de conocimiento
+        self.knowledge_base.update_world_stats(self)
         
         # Actualizar criaturas (OPTIMIZADO v2.9.1: prioridad para complejas)
         dead_creatures = []

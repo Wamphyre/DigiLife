@@ -75,14 +75,29 @@ LEARNING_RATE = 0.1
 ASSOCIATION_THRESHOLD = 5  # exposiciones necesarias para aprender palabra
 
 # Palabras básicas y sus contextos
+# Vocabulario básico (todas las criaturas vocales)
 VOCABULARY_CONTEXTS = {
-    'hambre': lambda c: c.energy < c.max_energy * 0.4,  # Aumentado de 0.3 a 0.4
-    'datos': lambda c: c.sees_food_nearby() and c.energy < c.max_energy * 0.6,  # Solo si necesitan comida
-    'ayuda': lambda c: c.energy < c.max_energy * 0.2,  # Aumentado de 0.15 a 0.2
-    'hola': lambda c: c.sees_creature_nearby() and c.energy > c.max_energy * 0.5,  # Solo si están bien
+    'hambre': lambda c: c.energy < c.max_energy * 0.4,
+    'datos': lambda c: c.sees_food_nearby() and c.energy < c.max_energy * 0.6,
+    'ayuda': lambda c: c.energy < c.max_energy * 0.2,
+    'hola': lambda c: c.sees_creature_nearby() and c.energy > c.max_energy * 0.5,
     'peligro': lambda c: c.detects_threat(),
-    'bien': lambda c: c.energy > c.max_energy * 0.75,  # Reducido de 0.8 a 0.75
-    'malo': lambda c: c.energy < c.max_energy * 0.25  # Aumentado de 0.2 a 0.25
+    'bien': lambda c: c.energy > c.max_energy * 0.75,
+    'malo': lambda c: c.energy < c.max_energy * 0.25
+}
+
+# Vocabulario avanzado (solo criaturas inteligentes 1500+)
+ADVANCED_VOCABULARY_CONTEXTS = {
+    'cohesion': lambda c: len(c.world.get_creatures_near(c.x, c.y, 100)) >= 3,  # Llamar a agruparse
+    'reproducir': lambda c: c.can_reproduce(),  # Momento de reproducirse
+    'defender': lambda c: c.detects_threat() and c.fitness > 100,  # Defender territorio
+    'peligro_aqui': lambda c: c.detects_threat() and c.energy < c.max_energy * 0.5,  # Peligro específico
+    'seguir': lambda c: hasattr(c, 'intelligence') and c.intelligence and c.energy > c.max_energy * 0.6,  # Seguir al líder
+    'explorar': lambda c: len(c.world.get_data_near(c.x, c.y, 150)) == 0,  # No hay comida cerca
+    'descansar': lambda c: c.energy > c.max_energy * 0.8 and c.age > 100,  # Conservar energía
+    'atacar': lambda c: hasattr(c, 'is_predator') and c.is_predator and c.energy > c.max_energy * 0.4,  # Coordinar ataque
+    'huir': lambda c: c.detects_threat() and c.fitness < 50,  # Huir de peligro
+    'compartir': lambda c: c.sees_food_nearby() and c.energy > c.max_energy * 0.7  # Compartir recursos
 }
 
 # Visualización
@@ -117,6 +132,7 @@ DEBUG = {
     'LOG_DEATHS': False,
     'LOG_VOCALIZATIONS': True,
     'LOG_MUTATIONS': False,
+    'LOG_INTELLIGENCE': True,  # Nuevo: logs de descubrimientos y aprendizaje
     'SHOW_FPS': True,
     'SHOW_COLLISION_BOXES': False,
     'SHOW_NEURAL_ACTIVITY': False

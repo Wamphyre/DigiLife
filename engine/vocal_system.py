@@ -75,9 +75,15 @@ class VocalSystem:
             for word in basic_words:
                 # Darles suficientes asociaciones para que ya las conozcan
                 self.associations[word] = config.ASSOCIATION_THRESHOLD
+        
+        # Si la criatura es inteligente, darle acceso a vocabulario avanzado
+        if creature.complexity >= 1500:
+            advanced_words = ['cohesion', 'defender', 'seguir']
+            for word in advanced_words:
+                self.associations[word] = config.ASSOCIATION_THRESHOLD
     
     def vocalize(self):
-        """Emitir vocalización según contexto (OPTIMIZADO v2.9)"""
+        """Emitir vocalización según contexto (OPTIMIZADO v2.9.3)"""
         if not config.AUDIO_ENABLED:
             return
         
@@ -96,12 +102,43 @@ class VocalSystem:
                 self.vocabulary[word] = 0
             self.vocabulary[word] += 1
             
-            if config.DEBUG['LOG_VOCALIZATIONS']:
+            # OPTIMIZACIÓN: Solo aplicar efectos el 30% de las veces (reduce carga)
+            if random.random() < 0.3:
+                from .communication_effects import CommunicationEffects
+                # Obtener criaturas cercanas que pueden escuchar (OPTIMIZADO: radio reducido)
+                listeners = self.creature.world.get_creatures_near(
+                    self.creature.x, self.creature.y, 80  # Reducido de 120 a 80
+                )
+                # OPTIMIZACIÓN: Limitar a máximo 10 listeners para evitar lag
+                if len(listeners) > 10:
+                    listeners = random.sample(listeners, 10)
+                
+                if len(listeners) > 1:  # Hay alguien escuchando
+                    CommunicationEffects.apply_word_effect(self.creature, listeners, word)
+            
+            # Logs de vocalización (20% para balance entre visibilidad y rendimiento)
+            if config.DEBUG['LOG_VOCALIZATIONS'] and random.random() < 0.2:
                 print(f"🗣️  Criatura {self.creature.id} dice: '{word}'")
     
     def choose_word(self) -> Optional[str]:
         """Elegir palabra apropiada según contexto"""
-        # Evaluar contextos
+        # Criaturas inteligentes tienen acceso a vocabulario avanzado
+        is_intelligent = (hasattr(self.creature, 'intelligence') and 
+                         self.creature.intelligence is not None)
+        
+        # Priorizar vocabulario avanzado si es inteligente
+        if is_intelligent and hasattr(config, 'ADVANCED_VOCABULARY_CONTEXTS'):
+            for word, context_func in config.ADVANCED_VOCABULARY_CONTEXTS.items():
+                try:
+                    if context_func(self.creature):
+                        if self.has_learned(word):
+                            return word
+                        else:
+                            self.try_learn(word)
+                except:
+                    pass
+        
+        # Evaluar contextos básicos
         for word, context_func in config.VOCABULARY_CONTEXTS.items():
             try:
                 if context_func(self.creature):
