@@ -60,6 +60,13 @@ class VocalSystem:
         # Cada criatura tiene su propia "voz" basada en frecuencia
         self.base_frequency = random.randint(400, 1200)  # Hz
         self.frequency_variation = random.randint(50, 200)  # Variación por palabra
+        
+        # Si la criatura es suficientemente compleja, darle algunas palabras básicas ya aprendidas
+        if creature.complexity >= config.COMPLEXITY_THRESHOLD_VOCAL:
+            basic_words = ['hola', 'bien', 'datos']
+            for word in basic_words:
+                # Darles suficientes asociaciones para que ya las conozcan
+                self.associations[word] = config.ASSOCIATION_THRESHOLD
     
     def vocalize(self):
         """Emitir vocalización según contexto (OPTIMIZADO v2.9)"""
@@ -103,9 +110,23 @@ class VocalSystem:
             except:
                 pass
         
-        # Si no hay palabra apropiada, emitir sonido aleatorio
+        # Si no hay palabra apropiada según contexto, elegir una palabra aprendida al azar
+        learned_words = [w for w, count in self.associations.items() 
+                        if count >= config.ASSOCIATION_THRESHOLD]
+        
+        if learned_words:
+            return random.choice(learned_words)
+        
+        # Si aún no ha aprendido ninguna palabra, intentar aprender una básica
         if self.creature.complexity >= 600:
-            return random.choice(['ah', 'oh', 'mm'])
+            basic_words = ['hola', 'bien', 'datos']
+            word = random.choice(basic_words)
+            self.try_learn(word)
+            # Dar un boost inicial para que aprenda más rápido
+            if word in self.associations:
+                self.associations[word] = min(config.ASSOCIATION_THRESHOLD, 
+                                             self.associations[word] + 2)
+            return word
         
         return None
     
