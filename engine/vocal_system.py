@@ -116,8 +116,8 @@ class VocalSystem:
                 if len(listeners) > 1:  # Hay alguien escuchando
                     CommunicationEffects.apply_word_effect(self.creature, listeners, word)
             
-            # Logs de vocalización (20% para balance entre visibilidad y rendimiento)
-            if config.DEBUG['LOG_VOCALIZATIONS'] and random.random() < 0.2:
+            # Logs de vocalización (TODAS las vocalizaciones)
+            if config.DEBUG['LOG_VOCALIZATIONS']:
                 print(f"🗣️  Criatura {self.creature.id} dice: '{word}'")
     
     def choose_word(self) -> Optional[str]:

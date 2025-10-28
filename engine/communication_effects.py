@@ -133,7 +133,7 @@ class CommunicationEffects:
         
         speaker.fitness += 1
         
-        if processed > 0 and config.DEBUG.get('LOG_VOCALIZATIONS', False) and random.random() < 0.15:
+        if processed > 0 and config.DEBUG.get('LOG_VOCALIZATIONS', False):
             print(f"🍽️  Criatura {speaker.id} señaló comida - {processed} criaturas responden")
     
     @staticmethod
@@ -207,7 +207,7 @@ class CommunicationEffects:
         
         speaker.fitness += 1
         
-        if config.DEBUG.get('LOG_VOCALIZATIONS', False) and random.random() < 0.15:
+        if config.DEBUG.get('LOG_VOCALIZATIONS', False):
             print(f"⚡ Criatura {speaker.id} alertó peligro - {len(listeners)-1} criaturas en alerta")
     
     @staticmethod
@@ -270,7 +270,7 @@ class CommunicationEffects:
         
         speaker.fitness += 2
         
-        if processed > 0 and config.DEBUG.get('LOG_VOCALIZATIONS', False) and random.random() < 0.15:
+        if processed > 0 and config.DEBUG.get('LOG_VOCALIZATIONS', False):
             print(f"🤝 Criatura {speaker.id} llamó a cohesión - {processed} criaturas responden")
     
     @staticmethod
@@ -301,7 +301,7 @@ class CommunicationEffects:
         
         speaker.fitness += 3
         
-        if config.DEBUG.get('LOG_VOCALIZATIONS', False) and random.random() < 0.15:
+        if config.DEBUG.get('LOG_VOCALIZATIONS', False):
             print(f"🛡️  Criatura {speaker.id} activó defensa - {len(listeners)-1} criaturas")
     
     @staticmethod
@@ -347,7 +347,7 @@ class CommunicationEffects:
         
         speaker.fitness += 3  # Bonus por liderazgo
         
-        if config.DEBUG.get('LOG_VOCALIZATIONS', False) and random.random() < 0.15:
+        if config.DEBUG.get('LOG_VOCALIZATIONS', False):
             print(f"👑 Criatura {speaker.id} lidera grupo")
     
     @staticmethod
@@ -365,7 +365,7 @@ class CommunicationEffects:
                 creature.vy += math.sin(angle) * force
                 creature.fitness += 0.5
         
-        if config.DEBUG.get('LOG_VOCALIZATIONS', False) and random.random() < 0.15:
+        if config.DEBUG.get('LOG_VOCALIZATIONS', False):
             print(f"🔍 Criatura {speaker.id} inició exploración")
     
     @staticmethod
@@ -382,7 +382,7 @@ class CommunicationEffects:
             # Pequeño bonus de energía por descansar
             creature.energy += 1
         
-        if config.DEBUG.get('LOG_VOCALIZATIONS', False) and random.random() < 0.15:
+        if config.DEBUG.get('LOG_VOCALIZATIONS', False):
             print(f"😴 Criatura {speaker.id} llamó a descansar")
     
     @staticmethod
@@ -411,7 +411,7 @@ class CommunicationEffects:
                                 predator.vx += (dx / distance) * force
                                 predator.vy += (dy / distance) * force
                     
-                    if config.DEBUG.get('LOG_VOCALIZATIONS', False) and random.random() < 0.2:
+                    if config.DEBUG.get('LOG_VOCALIZATIONS', False):
                         print(f"🎯 Criatura {speaker.id} coordinó ataque contra #{prey.id}")
                     break
     
@@ -438,7 +438,7 @@ class CommunicationEffects:
                     creature.vx += (dx / distance) * force
                     creature.vy += (dy / distance) * force
             
-            if config.DEBUG.get('LOG_VOCALIZATIONS', False) and random.random() < 0.15:
+            if config.DEBUG.get('LOG_VOCALIZATIONS', False):
                 print(f"🏃 Criatura {speaker.id} ordenó huida")
     
     @staticmethod
