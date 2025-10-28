@@ -1,0 +1,19 @@
+# DigiLife - Dependencias Python
+# Python 3.8+
+
+# Core
+numpy>=1.24.0
+pyopencl>=2023.1
+
+# Interfaz Gráfica
+pygame>=2.5.0
+
+# Utilidades
+pillow>=10.0.0
+
+# Testing (Opcional)
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Análisis (Opcional)
+matplotlib>=3.7.0
