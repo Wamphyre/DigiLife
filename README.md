@@ -10,6 +10,10 @@ DigiLife es un simulador avanzado de vida artificial donde criaturas digitales e
 
 ---
 
+![DigiLife Screenshot](screenshot.png)
+
+---
+
 ## 📑 Índice
 
 1. [Características Principales](#-características-principales)
