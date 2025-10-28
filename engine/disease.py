@@ -36,6 +36,7 @@ class Disease:
         self.active = True
         self.infected_count = 0
         self.deaths_caused = 0
+        self.patient_zero_id = None  # ID del paciente cero
     
     def get_total_energy_drain(self) -> float:
         """Obtener drenaje total de energía por ciclo"""
@@ -119,6 +120,7 @@ class DiseaseSystem:
         # Infectar paciente cero (criatura aleatoria)
         if self.world.creatures:
             patient_zero = random.choice(self.world.creatures)
+            disease.patient_zero_id = patient_zero.id  # Guardar ID del paciente cero
             self.infect_creature(patient_zero, disease)
             
             print(f"\n🦠 ¡BROTE DE EPIDEMIA!")
@@ -166,7 +168,10 @@ class DiseaseSystem:
                     'name': disease.name,
                     'infected': current_infected,
                     'deaths': disease.deaths_caused,
-                    'symptoms': disease.get_symptoms_text()
+                    'symptoms': disease.get_symptoms_text(),
+                    'patient_zero_id': disease.patient_zero_id,
+                    'contagion_rate': disease.contagion_rate,
+                    'lethality': disease.lethality
                 })
         
         return epidemics

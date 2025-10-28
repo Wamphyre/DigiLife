@@ -181,24 +181,54 @@ class StatsPanel:
                 self.screen.blit(epidemic_title, (self.x + 10, y_offset))
                 y_offset += 25
                 
-                for epidemic in epidemics[:2]:  # Máximo 2 para no saturar
+                for epidemic in epidemics[:1]:  # Máximo 1 para no saturar
                     disease_text = self.font_tiny.render(
-                        f"* {epidemic['name']}: {epidemic['infected']} infectados", 
+                        f"* {epidemic['name']}", 
                         True, (255, 150, 150)
                     )
                     self.screen.blit(disease_text, (self.x + 15, y_offset))
-                    y_offset += 20
+                    y_offset += 18
+                    
+                    # Paciente cero e infectados
+                    if epidemic.get('patient_zero_id'):
+                        info_text = self.font_tiny.render(
+                            f"  P0: #{epidemic['patient_zero_id']} | {epidemic['infected']} inf | {epidemic['deaths']} †", 
+                            True, (200, 150, 150)
+                        )
+                        self.screen.blit(info_text, (self.x + 15, y_offset))
+                        y_offset += 18
         
         # Depredación (versión sin scroll)
-        if config.PREDATION_ENABLED and y_offset < self.height - 80:
+        if config.PREDATION_ENABLED and y_offset < self.height - 120:
             if self.world.active_predators > 0 or self.world.predation_kills > 0:
                 y_offset += 10
+                predation_title = self.font_small.render("DEPREDACION", True, (255, 150, 50))
+                self.screen.blit(predation_title, (self.x + 10, y_offset))
+                y_offset += 22
+                
                 predation_text = self.font_tiny.render(
-                    f"DEPREDACION: {self.world.active_predators} activos | {self.world.predation_kills} muertes", 
-                    True, (255, 150, 50)
+                    f"{self.world.active_predators} activos | {self.world.predation_kills} muertes", 
+                    True, (255, 180, 100)
                 )
                 self.screen.blit(predation_text, (self.x + 15, y_offset))
                 y_offset += 20
+                
+                # Top 3 depredadores (versión compacta)
+                top_predators = self.world.get_top_predators(3)
+                if top_predators and y_offset < self.height - 60:
+                    for i, (creature_id, kills, complexity) in enumerate(top_predators, 1):
+                        creature_name = f"#{creature_id}"
+                        for c in self.world.creatures:
+                            if c.id == creature_id and hasattr(c, 'custom_name') and c.custom_name:
+                                creature_name = c.custom_name
+                                break
+                        
+                        predator_text = self.font_tiny.render(
+                            f"{i}. {creature_name}: {kills} kills", 
+                            True, (255, 180, 100)
+                        )
+                        self.screen.blit(predator_text, (self.x + 15, y_offset))
+                        y_offset += 16
     
     def render_with_scroll(self):
         """Renderizar todo el panel con scroll (cuando hay criatura seleccionada)"""
@@ -334,7 +364,7 @@ class StatsPanel:
                 y_offset += 30
                 
                 for epidemic in epidemics:
-                    # Nombre de la enfermedad (sin emoji problemático)
+                    # Nombre de la enfermedad
                     disease_text = self.font_small.render(
                         f"* {epidemic['name']}", 
                         True, (255, 150, 150)
@@ -342,12 +372,29 @@ class StatsPanel:
                     temp_surface.blit(disease_text, (5, y_offset))
                     y_offset += 22
                     
+                    # Paciente cero
+                    if epidemic.get('patient_zero_id'):
+                        patient_text = self.font_tiny.render(
+                            f"  Paciente cero: #{epidemic['patient_zero_id']}", 
+                            True, (255, 200, 100)
+                        )
+                        temp_surface.blit(patient_text, (5, y_offset))
+                        y_offset += 18
+                    
                     # Estadísticas
                     stats_text = self.font_tiny.render(
                         f"  Infectados: {epidemic['infected']} | Muertes: {epidemic['deaths']}", 
                         True, (200, 150, 150)
                     )
                     temp_surface.blit(stats_text, (5, y_offset))
+                    y_offset += 18
+                    
+                    # Contagio y letalidad
+                    danger_text = self.font_tiny.render(
+                        f"  Contagio: {epidemic['contagion_rate']*100:.1f}% | Letalidad: {epidemic['lethality']*100:.1f}%", 
+                        True, (255, 100, 100)
+                    )
+                    temp_surface.blit(danger_text, (5, y_offset))
                     y_offset += 18
                     
                     # Síntomas
@@ -393,7 +440,30 @@ class StatsPanel:
                     True, (200, 200, 200)
                 )
                 temp_surface.blit(rate_text, (5, y_offset))
-                y_offset += 20
+                y_offset += 25
+            
+            # Top 5 depredadores
+            top_predators = self.world.get_top_predators(5)
+            if top_predators:
+                y_offset += 5
+                top_title = self.font_small.render("Top 5 Depredadores:", True, (255, 200, 100))
+                temp_surface.blit(top_title, (5, y_offset))
+                y_offset += 22
+                
+                for i, (creature_id, kills, complexity) in enumerate(top_predators, 1):
+                    # Buscar si la criatura tiene nombre personalizado
+                    creature_name = f"#{creature_id}"
+                    for c in self.world.creatures:
+                        if c.id == creature_id and hasattr(c, 'custom_name') and c.custom_name:
+                            creature_name = c.custom_name
+                            break
+                    
+                    predator_text = self.font_tiny.render(
+                        f"  {i}. {creature_name} - {kills} kills (comp: {complexity:.0f})", 
+                        True, (255, 180, 100)
+                    )
+                    temp_surface.blit(predator_text, (5, y_offset))
+                    y_offset += 18
         
         # Criatura seleccionada
         y_offset += 20

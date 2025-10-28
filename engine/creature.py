@@ -84,6 +84,10 @@ class Creature:
         self.last_x = x
         self.last_y = y
         
+        # Depredación
+        self.is_predator = False
+        self.kills = 0  # Contador de presas cazadas
+        
         # Sistema vocal
         self.vocal_system = VocalSystem(self)
         
@@ -123,8 +127,8 @@ class Creature:
             if self.can_reproduce():
                 self.reproduce()
         
-        # Vocalizar si es apropiado - Reducir frecuencia
-        if self.can_vocalize() and random.random() < 0.005:  # 0.5% por frame
+        # Vocalizar si es apropiado - Aumentada frecuencia para más variedad
+        if self.can_vocalize() and random.random() < 0.02:  # 2% por frame (aumentado de 0.5%)
             self.vocal_system.vocalize()
         
         # Actualizar apariencia - Solo cada 5 frames
@@ -519,10 +523,24 @@ class Creature:
     
     def sees_creature_nearby(self) -> bool:
         """Detectar si hay otra criatura cerca"""
-        return len(self.world.get_creatures_near(self.x, self.y, 50)) > 1
+        nearby = self.world.get_creatures_near(self.x, self.y, 80)
+        return len(nearby) > 1  # Más de 1 porque nos incluye a nosotros
     
     def detects_threat(self) -> bool:
-        """Detectar amenaza (placeholder)"""
+        """Detectar amenaza (depredador cercano o criatura mucho más fuerte)"""
+        if not config.PREDATION_ENABLED:
+            return False
+        
+        nearby = self.world.get_creatures_near(self.x, self.y, 60)
+        for creature in nearby:
+            if creature != self:
+                # Detectar depredadores activos
+                if hasattr(creature, 'is_predator') and creature.is_predator:
+                    return True
+                # Detectar criaturas mucho más fuertes
+                if creature.fitness > self.fitness * 2.0:
+                    return True
+        
         return False
     
     def to_dict(self) -> dict:
@@ -591,8 +609,9 @@ class Creature:
         # Actualizar estadísticas del mundo
         self.world.predation_kills += 1
         
-        # Marcar como depredador activo
+        # Marcar como depredador activo y aumentar contador de kills
         self.is_predator = True
+        self.kills += 1
         
         print(f"🦁 Criatura {self.id} (comp: {self.complexity:.0f}) depredó a Criatura {prey.id} (comp: {prey.complexity:.0f})")
     
@@ -774,8 +793,8 @@ class Creature:
             if self.can_reproduce():
                 self.reproduce()
         
-        # Vocalización (reducida)
-        if self.can_vocalize() and random.random() < 0.005:
+        # Vocalización (aumentada frecuencia)
+        if self.can_vocalize() and random.random() < 0.02:  # 2% por frame
             self.vocal_system.vocalize()
         
         # Apariencia (cada 5 frames)

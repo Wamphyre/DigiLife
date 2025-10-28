@@ -158,6 +158,17 @@ class World:
             c.complexity >= config.PREDATION_COMPLEXITY_THRESHOLD
         )
     
+    def get_top_predators(self, limit: int = 5) -> List[Tuple]:
+        """Obtener top N depredadores por número de kills"""
+        predators = [
+            (c.id, c.kills, c.complexity) 
+            for c in self.creatures 
+            if hasattr(c, 'kills') and c.kills > 0
+        ]
+        # Ordenar por kills (descendente)
+        predators.sort(key=lambda x: x[1], reverse=True)
+        return predators[:limit]
+    
     def _update_creatures_batched(self, dt: float, dead_creatures: List, creatures_to_process: List = None):
         """Actualizar criaturas usando procesamiento por lotes en GPU"""
         if creatures_to_process is None:

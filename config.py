@@ -76,13 +76,13 @@ ASSOCIATION_THRESHOLD = 5  # exposiciones necesarias para aprender palabra
 
 # Palabras básicas y sus contextos
 VOCABULARY_CONTEXTS = {
-    'hambre': lambda c: c.energy < c.max_energy * 0.3,
-    'datos': lambda c: c.sees_food_nearby(),
-    'ayuda': lambda c: c.energy < c.max_energy * 0.15,
-    'hola': lambda c: c.sees_creature_nearby(),
+    'hambre': lambda c: c.energy < c.max_energy * 0.4,  # Aumentado de 0.3 a 0.4
+    'datos': lambda c: c.sees_food_nearby() and c.energy < c.max_energy * 0.6,  # Solo si necesitan comida
+    'ayuda': lambda c: c.energy < c.max_energy * 0.2,  # Aumentado de 0.15 a 0.2
+    'hola': lambda c: c.sees_creature_nearby() and c.energy > c.max_energy * 0.5,  # Solo si están bien
     'peligro': lambda c: c.detects_threat(),
-    'bien': lambda c: c.energy > c.max_energy * 0.8,
-    'malo': lambda c: c.energy < c.max_energy * 0.2
+    'bien': lambda c: c.energy > c.max_energy * 0.75,  # Reducido de 0.8 a 0.75
+    'malo': lambda c: c.energy < c.max_energy * 0.25  # Aumentado de 0.2 a 0.25
 }
 
 # Visualización

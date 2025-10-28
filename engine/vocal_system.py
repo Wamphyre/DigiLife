@@ -22,23 +22,31 @@ except ImportError:
 
 
 def play_beep(frequency: int, duration: int):
-    """Reproducir beep del sistema"""
+    """Reproducir beep del sistema con volumen máximo"""
     if not config.AUDIO_ENABLED:
         return
     
     try:
         if sys.platform == 'win32':
-            # Windows: usar winsound
+            # Windows: usar winsound (volumen controlado por sistema)
             import winsound
             winsound.Beep(frequency, duration)
         else:
             # Linux/Mac: intentar varios métodos
             import os
+            import subprocess
             
             # Método 1: beep command (si está instalado)
-            result = os.system(f'beep -f {frequency} -l {duration} 2>/dev/null &')
-            
-            if result != 0:
+            # -f: frecuencia en Hz, -l: duración en ms
+            # Redirigir stderr para evitar mensajes de error
+            try:
+                subprocess.run(
+                    ['beep', '-f', str(frequency), '-l', str(duration)],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    timeout=1
+                )
+            except (subprocess.TimeoutExpired, FileNotFoundError, Exception):
                 # Método 2: usar printf con el bell character (más universal)
                 # Esto hace un beep simple del sistema
                 os.system('printf "\\a" 2>/dev/null')
@@ -75,10 +83,6 @@ class VocalSystem:
         
         # Solo vocalizar si hay suficiente complejidad
         if self.creature.complexity < config.COMPLEXITY_THRESHOLD_VOCAL:
-            return
-        
-        # Limitar frecuencia de vocalizaciones (muy costoso)
-        if random.random() > 0.1:  # Solo 10% de las veces que se llama
             return
         
         # Determinar qué decir según contexto (sin audio real, solo log)
